@@ -1,4 +1,5 @@
-﻿using System;
+﻿using breaklee_file_check.Class;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -15,61 +16,8 @@ namespace breaklee_file_check
             InitializeComponent();
         }
 
-        // Folder class to represent the Folder structure
-        class Folder
-        {
-            public string Name { get; set; }
-
-            // Constructor to read from BinaryReader
-            public Folder(BinaryReader reader)
-            {
-                byte[] nameBytes = reader.ReadBytes(260); // 260 bytes for the name
-                Name = Encoding.ASCII.GetString(nameBytes).TrimEnd('\0');
-            }
-
-            public string FolderName()
-            {
-                return Name;
-            }
-
-            // Size of the folder structure in bytes
-            public int Size => 260; // Only name field
-        }
-
-        // File class to represent the File structure
-        class Files
-        {
-            public byte FolderIndex { get; set; }
-            public string Name { get; set; }
-            public byte Unk1 { get; set; }
-            public string Hash { get; set; }
-            public byte Unk2 { get; set; }
-            public int Size => 1 + 60 + 1 + 32 + 1; // folder_index + name(60) + unk1 + hash(32) + unk2
-
-            // Constructor to read from BinaryReader
-            public Files(BinaryReader reader)
-            {
-                FolderIndex = reader.ReadByte();          // 1 byte for folder_index
-                byte[] nameBytes = reader.ReadBytes(60);  // 60 bytes for the name
-                Name = Encoding.ASCII.GetString(nameBytes).TrimEnd('\0');
-                Unk1 = reader.ReadByte();                 // 1 byte for unk1
-                byte[] hashBytes = reader.ReadBytes(32);  // 32 bytes for the hash
-                Hash = Encoding.ASCII.GetString(hashBytes).TrimEnd('\0');
-                Unk2 = reader.ReadByte();                 // 1 byte for unk2
-            }
-
-            public string FileNameRead()
-            {
-                return FolderIndex == 0 ? "MagicKey" : Name;
-            }
-
-            public void FileHashWrite(string hashValue)
-            {
-                Hash = hashValue;
-            }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        #region Functions
+        public void Readxdata(DataGridView dataGridView)
         {
             // Create a DataTable to hold the folder and file data
             DataTable table = new DataTable();
@@ -127,11 +75,12 @@ namespace breaklee_file_check
             }
 
             // Bind the DataTable to the DataGridView
-            dataGridView1.DataSource = table;
+            dataGridView.DataSource = table;
 
             // Optional: Customize DataGridView appearance
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.AllowUserToAddRows = false; // Disable adding new rows by user
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView.AllowUserToAddRows = false; // Disable adding new rows by user
+
         }
 
         private void RemoveEncFiles()
@@ -283,11 +232,6 @@ namespace breaklee_file_check
             dataGridView1.AllowUserToAddRows = false; // Disable adding new rows by user
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            RemoveEncFiles();
-        }
-
         private string CalculateMagicKey()
         {
             // Variable to hold the MagicKey hash
@@ -324,7 +268,17 @@ namespace breaklee_file_check
 
             return magicKey.ToString();
         }
+        #endregion
 
+        #region Buttons
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Readxdata(dataGridView1);
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            RemoveEncFiles();
+        }
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -335,5 +289,7 @@ namespace breaklee_file_check
                 Clipboard.SetText( magicKey );
             }
         }
+        #endregion
+
     }
 }
