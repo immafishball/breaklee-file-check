@@ -16,7 +16,8 @@ namespace breaklee_file_check
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        #region Functions
+        public void Readxdata(DataGridView dataGridView)
         {
             // Create a DataTable to hold the folder and file data
             DataTable table = new DataTable();
@@ -74,11 +75,12 @@ namespace breaklee_file_check
             }
 
             // Bind the DataTable to the DataGridView
-            dataGridView1.DataSource = table;
+            dataGridView.DataSource = table;
 
             // Optional: Customize DataGridView appearance
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.AllowUserToAddRows = false; // Disable adding new rows by user
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView.AllowUserToAddRows = false; // Disable adding new rows by user
+
         }
 
         private void RemoveEncFiles()
@@ -230,11 +232,6 @@ namespace breaklee_file_check
             dataGridView1.AllowUserToAddRows = false; // Disable adding new rows by user
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            RemoveEncFiles();
-        }
-
         private string CalculateMagicKey()
         {
             // Variable to hold the MagicKey hash
@@ -271,7 +268,17 @@ namespace breaklee_file_check
 
             return magicKey.ToString();
         }
+        #endregion
 
+        #region Buttons
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Readxdata(dataGridView1);
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            RemoveEncFiles();
+        }
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -282,5 +289,7 @@ namespace breaklee_file_check
                 Clipboard.SetText( magicKey );
             }
         }
+        #endregion
+
     }
 }
