@@ -165,27 +165,6 @@ namespace breaklee_file_check
                 UpdateDataTableAfterRemoval(folders, files);
             }
         }
-        private string CalculateMagicKey(string hash)
-        {
-            // Ensure the hash is valid and has an even length
-            if (string.IsNullOrEmpty(hash) || hash.Length % 2 != 0)
-            {
-                throw new ArgumentException("Invalid hash. It must be a non-empty string with an even length.");
-            }
-
-            // Cut the hash in half
-            int halfLength = hash.Length / 2;
-            string firstHalf = hash.Substring(0, halfLength);
-
-            // Extract odd-indexed characters from the first half
-            StringBuilder magicKey = new StringBuilder();
-            for (int i = 1; i < firstHalf.Length; i += 2) // Start at index 1 and step by 2
-            {
-                magicKey.Append(firstHalf[i]);
-            }
-
-            return magicKey.ToString();
-        }
 
         private void UpdateDataTableAfterRemoval(Folder[] folders, List<Files> files)
         {
