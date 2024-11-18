@@ -47,8 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\COZip.cs" />
     <Compile Include="Class\Files.cs" />
     <Compile Include="Class\Folder.cs" />
+    <Compile Include="Class\Zlib.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
