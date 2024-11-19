@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Security.Policy;
 using System.Text;
 using System.Windows.Forms;
 
@@ -249,14 +248,70 @@ namespace breaklee_file_check
         }
         #endregion
 
+        private uint XorKeys()
+        {
+            string xor4 = textBox4.Text;
+            string xor3 = textBox3.Text;
+            string xor2 = textBox2.Text;
+            string xor1 = textBox1.Text;
+
+            string FullXorKey = xor4 + xor3 + xor2 + xor1;
+
+            uint xor = Convert.ToUInt32(FullXorKey, 16);
+
+            return xor;
+        }
+
+        #region Unpack
+        private void Unpack(string filename)
+        {
+            // Unpack
+            var inFile = File.OpenRead(filename + ".enc"); ;
+            var outFile = File.Create(filename + ".dec"); ;
+
+            COZip.Inflate(inFile, outFile, XorKeys());
+
+            inFile.Close();
+            outFile.Flush();
+            outFile.Close();
+        }
+        #endregion
+
+        #region Pack
+        private void Pack(string filename)
+        {
+            // Pack
+            var inFile = File.OpenRead(filename + ".dec");
+            var outFile = File.Create(filename + ".enc");
+
+            COZip.Deflate(inFile, outFile, XorKeys(), 1 /* Valid compression levels are from 0 to 9 */);
+
+            inFile.Close();
+            outFile.Flush();
+            outFile.Close();
+        }
+        #endregion
+
         #region Buttons
         private void button1_Click(object sender, EventArgs e)
         {
-            Readxdata(dataGridView1);
+            if (File.Exists("xdata.dec"))
+            {
+                Readxdata(dataGridView1);
+            }
+            else
+            {
+                //Unpack then read
+                Unpack("xdata");
+                Readxdata(dataGridView1);
+            }
+
         }
+
         private void button2_Click(object sender, EventArgs e)
         {
             RemoveEncFiles();
+            Pack("xdata");
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -265,7 +320,7 @@ namespace breaklee_file_check
             if (!string.IsNullOrEmpty(magicKey))
             {
                 MessageBox.Show($"ClientMagicKey: {magicKey}");
-                Clipboard.SetText( magicKey );
+                Clipboard.SetText(magicKey);
             }
         }
         #endregion
